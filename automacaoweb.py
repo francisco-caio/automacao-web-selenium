@@ -1,41 +1,55 @@
-# imporatndo nossas bibliotecas
+
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-import time
-time.sleep(3)
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
-print("Iniciando o robô... aguarde.")
-# Configura o serviço e tenta instalar o driver
+# Configuração do Navegador
 servico = Service(ChromeDriverManager().install())
-
-    # Abre o navegador
 navegador = webdriver.Chrome(service=servico)
+wait = WebDriverWait(navegador, 15)
 
-    # Tenta entrar no site
-# O robô vai digitar o site e dar enter
-navegador.get("https://www.saucedemo.com/")
-time.sleep(3)
+try:
+    print("Iniciando busca no Buscapé...")
+    navegador.get("https://www.buscape.com.br/")
 
-# vai pegar o campo_usuario(objeto) pelo elemento id e vai fazer o metodo send_keys
-campo_usuario = navegador.find_element(By.ID, "user-name")
-campo_usuario.send_keys("standard_user")
+    # Aguarda até o campo de busca estar disponível
+    busca = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[type="search"]')))
 
-# vai pegar o campo_senha(objeto) pelo elemento id e vai fazer o metodo send_keys
-campo_senha = navegador.find_element(By.ID, "password")
-campo_senha.send_keys("secret_sauce")
+    # 1. Busca o Notebook
+    busca.send_keys("Notebook Lenovo")
+    busca.send_keys(Keys.ENTER)
+    
+    print("carregando resultados...")
+    produtos = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="product-card"]')))
 
-time.sleep(5)
+    # 2. Captura os dados (Exemplo de extração)
+    lista_produtos = []
+    
+    # Vamos pegar os cards de produtos
+    print(f"Foram encontrados {len(produtos)} produtos na tela.")
+    for produto in produtos[:10]: # Pega os 10 primeiros
+        try:
+            nome = produto.find_element(By.CSS_SELECTOR, 'h2').text
+            preco = produto.find_element(By.CSS_SELECTOR, '[data-testid="product-card::price"]').text
+            
+            lista_produtos.append({
+                "modelo": nome,
+                "valor": preco
+            })
+        except:
+            continue # Se um card falhar, pula para o próximo
 
-# vai pegar o botao(enviar) pelo elemento dele e vai fazer a funcao onclick
-botao_enviar = navegador.find_element(By.CSS_SELECTOR, "input[type='submit']")
-botao_enviar.click()
+    # 3. Transformação com Pandas
 
-print("Dados preenchidos e botão clicado!")
-print(f"Sucesso! O site aberto foi: {navegador.title}")
 
-    # espera carregar a tela por 20 segundos
-time.sleep(20)
+except Exception as e:
+    print(f"erro na automação: {e}")
 
+finally:
+    print("finalizando processo...")
+    # navegador.quit() # Comente se quiser ver o resultado na tela
