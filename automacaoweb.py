@@ -20,17 +20,16 @@ try:
     # Aguarda até o campo de busca estar disponível
     busca = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[type="search"]')))
 
-    # 1. Busca o Notebook
+    #  Busca o Notebook
     busca.send_keys("Notebook Lenovo")
     busca.send_keys(Keys.ENTER)
     
     print("carregando resultados...")
     produtos = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="product-card"]')))
 
-    # 2. Captura os dados (Exemplo de extração)
     lista_produtos = []
     
-    # Vamos pegar os cards de produtos
+    # vamos pegar os cards de produtos
     print(f"Foram encontrados {len(produtos)} produtos na tela.")
     for produto in produtos[:10]: # Pega os 10 primeiros
         try:
@@ -44,12 +43,9 @@ try:
         except:
             continue # Se um card falhar, pula para o próximo
 
-    # 3. Transformação com Pandas
-
-
 except Exception as e:
     print(f"erro na automação: {e}")
 
 finally:
     print("finalizando processo...")
-    # navegador.quit() # Comente se quiser ver o resultado na tela
+   
