@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# 1. Configuração do Navegador (com Headless e User-Agent)
+# 1. Configuração do Navegador com o headles e o agent para mascara nosso robo
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new") # Roda em segundo plano
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
@@ -18,7 +18,7 @@ navegador = webdriver.Chrome(service=servico, options=options)
 wait = WebDriverWait(navegador, 15)
 
 try:
-    print("Iniciando busca no Buscapé (Modo Silencioso)...")
+    print("Iniciando busca no Buscapé...")
     navegador.get("https://www.buscape.com.br/")
 
     # Busca o Notebook
@@ -27,7 +27,7 @@ try:
     busca.send_keys(Keys.ENTER)
 
     print("Carregando resultados e aplicando scroll...")
-    # 2. Scroll suave para carregar o Lazy Loading
+    # 2. coloquei o Scroll para carregar o Lazy Loading dos cards
     for _ in range(3):
         navegador.execute_script("window.scrollBy(0, 1000);")
         import time
@@ -49,23 +49,21 @@ try:
     if lista_produtos:
         df = pd.DataFrame(lista_produtos)
 
-        # Função de limpeza: Explicação da Regex [^\d,]
-        # Ela remove tudo que NÃO é dígito ou vírgula. 
-        # Ex: "R$ 1.999,00" -> "1999,00" -> "1999.00"
+        # [^\d,] tudo que nao e numero e apagar e tira as ','
         def limpar_preco(preco_texto):
             apenas_numeros = re.sub(r'[^\d,]', '', preco_texto)
             return float(apenas_numeros.replace(',', '.'))
 
         df['valor_num'] = df['valor'].apply(limpar_preco)
 
-        # 4. Filtros Coerentes: i3 ou i5 E preço < 2000
-        # O símbolo | significa "OU". O str.contains ignora maiúsculas/minúsculas
+        # i3 | i5 e preço < 2000
+        # O str.contains ignora maiúsculas/minúsculas
         filtro_processador = df['modelo'].str.contains('i3|i5', case=False)
         filtro_preco = df['valor_num'] < 2000
         
         df_final = df[filtro_processador & filtro_preco].sort_values(by='valor_num')
 
-        # 5. Exportação para Excel (CSV com ponto e vírgula)
+        # 5. Exportação para Excel csv com ponto e vírgula
         df_final.to_csv("ofertas_lenovo_filtradas.csv", 
                        index=False, 
                        sep=';', 
