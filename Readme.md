@@ -95,10 +95,8 @@ Um arquivo `ofertas_lenovo_filtradas.csv` será gerado no diretório raiz, pront
 
 ## 📊 Exemplo de Saída
 
-| Modelo | Valor Bruto | Valor Numérico |
-|--------|------------|----------------|
-| Lenovo IdeaPad 3 (i3) | R$ 1.899,00 | 1899.0 |
-| Lenovo ThinkBook (i5) | R$ 1.799,99 | 1799.99 |
+
+<img width="937" height="183" alt="image" src="https://github.com/user-attachments/assets/436fa728-ef47-4f71-a7b2-994b5f19dbc1" />
 
 ---
 
