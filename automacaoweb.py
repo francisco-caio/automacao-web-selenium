@@ -35,7 +35,7 @@ try:
 
     # Captura todos os cards de produtos
     produtos = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="product-card"]')))
-    
+    #lista vazia para me retornar umma nova lista com os produtos
     lista_produtos = []
     for produto in produtos:
         try:
@@ -59,7 +59,7 @@ try:
         # i3 | i5 e preço < 2000
         # O str.contains ignora maiúsculas/minúsculas
         filtro_processador = df['modelo'].str.contains('i3|i5', case=False)
-        filtro_preco = df['valor_num'] < 2000
+        filtro_preco = df['valor_num'] < 3000
         
         df_final = df[filtro_processador & filtro_preco].sort_values(by='valor_num')
 
